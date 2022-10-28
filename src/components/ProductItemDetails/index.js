@@ -26,24 +26,52 @@ class ProductItemDetails extends Component {
     availability: fetchedData.availability,
   })
 
+  onGoShopping = () => {
+    const {history} = this.props
+    history.replace('/products')
+  }
+
+  renderFailureView = () => (
+    <>
+      <Header />
+      <div className="container">
+        <img
+          src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-error-view-img.png"
+          alt="error view"
+          className="product-image"
+        />
+        <p className="details">Products Not Found</p>
+        <button type="button" className="add-btn" onClick={this.onGoShopping}>
+          Continue Shopping
+        </button>
+      </div>
+    </>
+  )
+
   getResponseProducts = async () => {
     const {match} = this.props
     const {params} = match
     const {id} = params
     const jwtToken = Cookies.get('jwt_token')
     const options = {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
       method: 'GET',
-      body: JSON.stringify(jwtToken),
     }
     const response = await fetch(`https://apis.ccbp.in/products/${id}`, options)
     const data = await response.json()
+    console.log(data)
     const formatData = {
-      productDetails: this.getFormatData(data.product),
+      productDetails: this.getFormatData(data),
       similarProductDetails: data.similar_products.map(item =>
         this.getFormatData(item),
       ),
     }
     this.setState({selectedProductList: formatData, isLoading: false})
+    if (data.status_code === 404) {
+      this.renderFailureView(data.error_msg)
+    }
   }
 
   onIncrement = () => {
@@ -52,8 +80,8 @@ class ProductItemDetails extends Component {
     }))
   }
 
-  onDecrement = () => {
-    if (this.count === 1) {
+  onDecrement = count => {
+    if (count === 1) {
       this.setState({count: 1})
     }
     this.setState(prevState => ({
@@ -92,20 +120,28 @@ class ProductItemDetails extends Component {
             </div>
             <p className="reviews">{totalReviews} Reviews</p>
           </div>
-          <p className="description">{description}</p>
-          <p className="details">
-            Available: <span>{availability}</span>
-          </p>
-          <p className="details">
-            Brand: <span>{brand}</span>
-          </p>
+          <div className="para-card">
+            <p className="description">{description}</p>
+          </div>
+          <p className="details">Available: {availability}</p>
+          <p className="details">Brand: {brand}</p>
           <hr />
           <div className="count-container">
-            <button type="button" className="btn" onClick={this.onDecrement}>
+            <button
+              type="button"
+              className="btn"
+              onClick={this.onDecrement}
+              testid="minus"
+            >
               <BsDashSquare />
             </button>
             <p className="count">{count}</p>
-            <button type="button" className="btn" onClick={this.onIncrement}>
+            <button
+              type="button"
+              className="btn"
+              onClick={this.onIncrement}
+              testid="plus"
+            >
               <BsPlusSquare />
             </button>
           </div>

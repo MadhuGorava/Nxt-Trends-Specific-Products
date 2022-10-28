@@ -4,9 +4,10 @@
   align-items: center;
 }
 .product-image {
-  height: 250px;
-  width: 125px;
-  border: 15px;
+  height: 450px;
+  width: 325px;
+  border-radius: 25px;
+  margin-right: 20px;
 }
 .product-details-container {
   display: flex;
@@ -113,5 +114,16 @@ span {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  align-items: center;
+}
+
+.para-card {
+  max-width: 400px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
